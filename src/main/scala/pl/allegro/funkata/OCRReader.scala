@@ -3,10 +3,13 @@ import scala.io.{BufferedSource, Source}
 import java.net.URI
 
 class OCRReader {
+  
+  type CharLine = List[Char]
 
   def readInput(fileName: String): String = {
-    val chars: List[List[List[Char]]] = readFile(fileName) map {splitToThrees(_)}
+    val chars: List[List[CharLine]] = readFile(fileName) map {splitToCharLines(_)}
 
+    chars.transpose
     (chars(0) zip chars(1) zip chars(2) zip chars(3)) map {
       case (((a, b), c), d) => 
         List(a mkString, b mkString, c mkString, d mkString) mkString (sys.props("line.separator"))
@@ -29,13 +32,12 @@ class OCRReader {
     input
   }
 
-  def splitToThrees (text: String, acc: List[List[Char]] = List.empty[List[Char]]): List[List[Char]] = {
+  def splitToCharLines (text: String, acc: List[CharLine] = List.empty[CharLine]): List[CharLine] =
     text match {
       case "" => acc
-      case s => splitToThrees(s.drop(3), acc :+ s.take(3).toCharArray.toList)
-
-   }
-  }
+      case s => splitToCharLines(s.drop(3), acc :+ s.take(3).toCharArray.toList)
+     }
+  
 
 
 }
