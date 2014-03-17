@@ -8,7 +8,7 @@ class OCRReaderTest extends FunSpec with GivenWhenThen with BeforeAndAfter{
     readerUnderTest = new OCRReader
   }
   
-  def testSchemeForOCRReader(expectedOutput: String, fileName: String, thenString: String): Unit = {
+  def checkThat(thenString: String, expectedOutput: String, fileName: String ): Unit = {
     Given(s"file name with $expectedOutput")
     When("reader reads file")
     val output = readerUnderTest.readInput(fileName)
@@ -18,37 +18,40 @@ class OCRReaderTest extends FunSpec with GivenWhenThen with BeforeAndAfter{
 
   describe("OCR Reader") {
     it("should read all zeros file") {
-      testSchemeForOCRReader("000000000", "/test1.txt", "output should be nine zeros")
+      checkThat("output should be nine zeros", "000000000", "/test1.txt" )
     }
     it("should read all ones file") {
-      testSchemeForOCRReader("111111111", "/test2.txt", "output should be nine ones")
+      checkThat("output should be nine ones", "111111111", "/test2.txt")
     }
     it("should read all twos file") {
-      testSchemeForOCRReader("222222222", "/test3.txt", "output should be nine twos")
+      checkThat("output should be nine twos", "222222222", "/test3.txt")
     }
     it("should read all threes file") {
-      testSchemeForOCRReader("333333333", "/test4.txt", "output should be nine threes")
+      checkThat("output should be nine threes", "333333333", "/test4.txt" )
     }
     it("should read all fours file") {
-      testSchemeForOCRReader("444444444", "/test5.txt", "output should be nine fours")
+      checkThat("output should be nine fours", "444444444", "/test5.txt" )
     }
     it("should read all fives file") {
-      testSchemeForOCRReader("555555555", "/test6.txt", "output should be nine fives")
+      checkThat("output should be nine fives", "555555555", "/test6.txt")
     }
     it("should read all sixes file") {
-      testSchemeForOCRReader("666666666", "/test7.txt", "output should be nine sixes")
+      checkThat("output should be nine sixes", "666666666", "/test7.txt")
     }
     it("should read all sevens file") {
-      testSchemeForOCRReader("777777777", "/test8.txt", "output should be nine sixes")
+      checkThat("output should be nine sixes", "777777777", "/test8.txt")
     }
     it("should read all eights file") {
-      testSchemeForOCRReader("888888888", "/test9.txt", "output should be nine sixes")
+      checkThat("output should be nine sixes", "888888888", "/test9.txt")
     }
     it("should read all nines file") {
-      testSchemeForOCRReader("999999999", "/test10.txt", "output should be nine sixes")
+      checkThat("output should be nine sixes", "999999999", "/test10.txt")
     }
     it("should read different digits file") {
-      testSchemeForOCRReader("123456789", "/test11.txt", "output should be 123456789")
+      checkThat("output should be 123456789", "123456789", "/test11.txt")
+    }
+    it("should validate correctness of digits") {
+      checkThat("output should contain illegal message", "49006771? ILL", "/test_ill.txt")
     }
     
 
