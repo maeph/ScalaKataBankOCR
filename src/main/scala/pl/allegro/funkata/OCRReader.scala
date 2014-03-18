@@ -57,14 +57,12 @@ object OCRReader {
   def switchedSingleChar(input: String, position: Int): Set[String] = {
     chars.map(input.take(position) + _ + input.drop(position + 1))   
   }
-  def fuzzyMatch(digit: String): Set[String] = {
-    val closeDigitals: IndexedSeq[String] = for {
-      i <- 0 until digit.size
-      potentialDigit <- switchedSingleChar(digit, i)
+  def switchedSingleCharCombination(input: String) : Set[String] = {
+    val morphedCombinations: IndexedSeq[Set[String]] = for {
+      i <- 0 until input.size
     } yield {
-        Digits.digitalToDigit(potentialDigit)
-      } 
-    
-    closeDigitals.filter(_ != "?").toSet
+      switchedSingleChar(input, i)
+    }
+    morphedCombinations.toSet.flatten
   }
 }
