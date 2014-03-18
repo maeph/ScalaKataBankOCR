@@ -55,6 +55,22 @@ object Digits {
        %| |
        %|_|
        %   """.stripMargin('%')
+
+  def digitalToDigit: (String) => String = {
+
+    case Digits.ZERO => "0"
+    case Digits.ONE => "1"
+    case Digits.TWO => "2"
+    case Digits.THREE => "3"
+    case Digits.FOUR => "4"
+    case Digits.FIVE => "5"
+    case Digits.SIX => "6"
+    case Digits.SEVEN => "7"
+    case Digits.EIGHT => "8"
+    case Digits.NINE => "9"
+    case _ => "?"
+
+  }
 }
 /**
     _  _     _  _  _  _  _  _
