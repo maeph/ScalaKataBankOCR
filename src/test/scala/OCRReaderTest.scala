@@ -24,6 +24,10 @@ class OCRReaderTest extends FunSpec with GivenWhenThen with BeforeAndAfter{
       checkThat(OCRReader.readInput, "output should be crc checked", "111111111 ERR", "/test2.txt")
     }
 
+    it("should provide closest correct output") {
+      checkThat(OCRReader.readFuzzyInput, "output should be closest correct digits", "711111111", "/test2.txt")
+    }
+
   }
   
   describe("singleSwitched") {
