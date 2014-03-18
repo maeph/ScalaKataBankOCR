@@ -1,6 +1,7 @@
 package pl.allegro.funkata
 import scala.io.{BufferedSource, Source}
 import scala.annotation.tailrec
+import scala.collection.immutable.IndexedSeq
 
 class OCRReader {
 
@@ -17,7 +18,7 @@ class OCRReader {
   def parseInputDigitals(lines: List[StringLine]): String =
     (lines(0) zip lines(1) zip lines(2) zip lines(3)).map {
       case (((a, b), c), d) => List(a, b, c, d).mkString(sys.props("line.separator"))
-    }.map(digitalToDigit).mkString
+    }.map(Digits.digitalToDigit).mkString
 
 
   def crCheck(output: String): Boolean = {
@@ -33,21 +34,7 @@ class OCRReader {
     case s => s
   }
 
-  def digitalToDigit: (String) => String = {
 
-    case Digits.ZERO => "0"
-    case Digits.ONE => "1"
-    case Digits.TWO => "2"
-    case Digits.THREE => "3"
-    case Digits.FOUR => "4"
-    case Digits.FIVE => "5"
-    case Digits.SIX => "6"
-    case Digits.SEVEN => "7"
-    case Digits.EIGHT => "8"
-    case Digits.NINE => "9"
-    case _ => "?"
-
-  }
 
   def readFile(fileName: String): List[String] = {
     val file: BufferedSource = Source.fromURL(getClass.getResource(fileName))
@@ -62,4 +49,22 @@ class OCRReader {
       case "" => acc
       case s => splitToStringLine(s.drop(3), acc :+ s.take(3))
     }
+}
+
+
+object OCRReader {
+  val chars:Set[Char] = Set(' ', '_', '|')
+  def switchedSingleChar(input: String, position: Int): Set[String] = {
+    chars.map(input.take(position) + _ + input.drop(position + 1))   
+  }
+  def fuzzyMatch(digit: String): Set[String] = {
+    val closeDigitals: IndexedSeq[String] = for {
+      i <- 0 until digit.size
+      potentialDigit <- switchedSingleChar(digit, i)
+    } yield {
+        Digits.digitalToDigit(potentialDigit)
+      } 
+    
+    closeDigitals.filter(_ != "?").toSet
+  }
 }
