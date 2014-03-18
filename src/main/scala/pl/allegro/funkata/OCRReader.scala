@@ -9,17 +9,9 @@ object OCRReader {
   type StringLine = List[String]
   
   def generateFuzzyReads(lines: List[String]): Set[List[String]] = {
-    val line0Morphed: Set[List[String]] = switchedSingleCharCombination(lines(0)) map {
-      case line => line :: lines.tail
-    }
-    val line1Morphed: Set[List[String]] = switchedSingleCharCombination(lines(1)) map {
-      case line => List(lines(0),line, lines(2),lines(3))
-    }
-    val line2Morphed: Set[List[String]] = switchedSingleCharCombination(lines(2)) map {
-      case line => List(lines(0),lines(1), line, lines(3))
-    } 
-    
-     line0Morphed ++ line1Morphed ++ line2Morphed
+    (switchedSingleCharCombination(lines(0)) map (List(_, lines(1), lines(2),lines(3)))) ++
+    (switchedSingleCharCombination(lines(1)) map (List(lines(0),_ , lines(2),lines(3)))) ++
+    (switchedSingleCharCombination(lines(2)) map (List(lines(0), lines(1),_ , lines(3))))
   }
 
   def readFuzzyInput(fileName: String): String = {
