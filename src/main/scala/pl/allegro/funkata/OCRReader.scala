@@ -3,7 +3,7 @@ import scala.io.{BufferedSource, Source}
 import scala.annotation.tailrec
 import scala.collection.immutable.IndexedSeq
 
-class OCRReader {
+object OCRReader {
 
   type StringLine = List[String]
 
@@ -34,8 +34,6 @@ class OCRReader {
     case s => s
   }
 
-
-
   def readFile(fileName: String): List[String] = {
     val file: BufferedSource = Source.fromURL(getClass.getResource(fileName))
     val input: List[String] = file.getLines().toList
@@ -49,13 +47,10 @@ class OCRReader {
       case "" => acc
       case s => splitToStringLine(s.drop(3), acc :+ s.take(3))
     }
-}
 
-
-object OCRReader {
-  val chars:Set[Char] = Set(' ', '_', '|')
   def switchedSingleChar(input: String, position: Int): Set[String] = {
-    chars.map(input.take(position) + _ + input.drop(position + 1))   
+    val chars:Set[Char] = Set(' ', '_', '|')
+    chars.map(input.take(position) + _ + input.drop(position + 1))
   }
   def switchedSingleCharCombination(input: String) : Set[String] = {
     val morphedCombinations: IndexedSeq[Set[String]] = for {
@@ -66,3 +61,4 @@ object OCRReader {
     morphedCombinations.toSet.flatten
   }
 }
+

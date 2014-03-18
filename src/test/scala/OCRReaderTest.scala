@@ -3,11 +3,7 @@ package pl.allegro.funkata
 import org.scalatest.{BeforeAndAfter, FunSpec, GivenWhenThen}
 
 class OCRReaderTest extends FunSpec with GivenWhenThen with BeforeAndAfter{
-  var readerUnderTest: OCRReader = _
-  before {
-    readerUnderTest = new OCRReader
-  }
-  
+
   def checkThat(readFn:(String) => Any,thenString: String, expectedOutput: Any, fileName: String ): Unit = {
     Given(s"file name with $expectedOutput")
     When("reader reads file")
@@ -18,14 +14,14 @@ class OCRReaderTest extends FunSpec with GivenWhenThen with BeforeAndAfter{
 
   describe("OCR Reader") {
     it("should read different digits file") {
-      checkThat(readerUnderTest.readInput, "output should be 123456789", "123456789", "/test11.txt")
+      checkThat(OCRReader.readInput, "output should be 123456789", "123456789", "/test11.txt")
     }
     it("should validate correctness of digits") {
-      checkThat(readerUnderTest.readInput, "output should contain illegal message", "49006771? ILL", "/test_ill.txt")
+      checkThat(OCRReader.readInput, "output should contain illegal message", "49006771? ILL", "/test_ill.txt")
     }
     
     it("should validate crc sum of the series of digits") {    
-      checkThat(readerUnderTest.readInput, "output should be crc checked", "111111111 ERR", "/test2.txt")
+      checkThat(OCRReader.readInput, "output should be crc checked", "111111111 ERR", "/test2.txt")
     }
 
   }
