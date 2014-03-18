@@ -6,6 +6,8 @@ import javax.management.remote.rmi._RMIConnection_Stub
 
 object OCRReader {
 
+  type StringLine = List[String]
+  
   def generateFuzzyReads(lines: List[String]): Set[List[String]] = {
     val line0Morphed: Set[List[String]] = switchedSingleCharCombination(lines(0)) map {
       case line => line :: lines.tail
@@ -21,15 +23,18 @@ object OCRReader {
   }
 
   def readFuzzyInput(fileName: String): String = {
+    val simpleRead: String = readInput(fileName)
     val fuzzyReads:Set[List[String]] = generateFuzzyReads(readFile(fileName))
     val readDigits: Set[String] = fuzzyReads map readInputLines
     val correctDigits: Set[String] = readDigits filter {case r => !(r.contains("ILL") || r.contains("ERR"))}
-    correctDigits.head
+    println(simpleRead.take(9) +" AMB [" + correctDigits.map("'" + _ + "'").mkString(",") + "]")
+    correctDigits.size match {
+      case 0 => readInput(fileName)
+      case 1 => correctDigits.head
+      case _ => simpleRead.take(9) + " AMB [" + correctDigits.map("'" + _ + "'").mkString(", ") + "]"
+    }
     
   }
-
-  type StringLine = List[String]
-
 
   def readInput(fileName: String): String = {
     val lines: List[String] = readFile(fileName)

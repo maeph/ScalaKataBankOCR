@@ -4,7 +4,7 @@ import org.scalatest.{BeforeAndAfter, FunSpec, GivenWhenThen}
 
 class OCRReaderTest extends FunSpec with GivenWhenThen with BeforeAndAfter{
 
-  def checkThat(readFn:(String) => Any,thenString: String, expectedOutput: Any, fileName: String ): Unit = {
+  def checkThat(readFn:(String) => String, thenString: String, expectedOutput: String, fileName: String ): Unit = {
     Given(s"file name with $expectedOutput")
     When("reader reads file")
     val output = readFn(fileName)
@@ -12,22 +12,36 @@ class OCRReaderTest extends FunSpec with GivenWhenThen with BeforeAndAfter{
     assert (output == expectedOutput)
   }
 
+
+  def checkThatContains(readFn:(String) => String,thenString: String, expectedOutput: List[String], fileName: String ): Unit = {
+    Given(s"file name with $expectedOutput")
+    When("reader reads file")
+    val output = readFn(fileName)
+    Then(thenString)
+    assert (expectedOutput.contains(output))
+  }
+
   describe("OCR Reader") {
     it("should read different digits file") {
-      checkThat(OCRReader.readInput, "output should be 123456789", "123456789", "/test11.txt")
+      checkThat(OCRReader.readFuzzyInput, "output should be 123456789", "123456789", "/test11.txt")
     }
     it("should validate correctness of digits") {
-      checkThat(OCRReader.readInput, "output should contain illegal message", "49006771? ILL", "/test_ill.txt")
+      checkThat(OCRReader.readFuzzyInput, "output should contain illegal message", "49006771? ILL", "/test_ill.txt")
     }
     
     it("should validate crc sum of the series of digits") {    
       checkThat(OCRReader.readInput, "output should be crc checked", "111111111 ERR", "/test2.txt")
     }
 
-    it("should provide closest correct output") {
+    it("should provide closest correct output for 111111111") {
       checkThat(OCRReader.readFuzzyInput, "output should be closest correct digits", "711111111", "/test2.txt")
     }
-
+    
+    it("should provide closest correct output for 555555555") {
+      checkThatContains(OCRReader.readFuzzyInput, "output should be list of closest correct digits", 
+        List("555555555 AMB ['555655555', '559555555']","555555555 AMB ['559555555', '555655555']"), "/test6.txt")
+    }
+    
   }
   
   describe("singleSwitched") {
